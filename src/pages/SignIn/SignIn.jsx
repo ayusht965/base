@@ -5,8 +5,10 @@ import GoogleLogo from './../../assets/google.png';
 import AppleLogo from './../../assets/apple.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTwitter, faLinkedin, faDiscord, faGithub } from '@fortawesome/free-brands-svg-icons'
+import { useNavigate } from 'react-router-dom';
 
 const SignIn = () => {
+    const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
@@ -19,7 +21,12 @@ const SignIn = () => {
     };
 
     const handleFormSubmit = (e) => {
+        if(email === '' || password === ''){
+            alert('Please fill all the fields');
+            return;
+        }
         e.preventDefault();
+        navigate('/dashboard', { replace: true })
         console.log('Email:', email);
         console.log('Password:', password);
     };
@@ -35,22 +42,22 @@ const SignIn = () => {
     return (
         <>
             <div className='sigin-page'>
-                <div className='sign-in-deco'>
-                    <img src={Logo} alt='logo' />
-                    <h1>BASE</h1>
-                    <div className='social-links'>
-                        <FontAwesomeIcon className='link' icon={faGithub} />
-                        <FontAwesomeIcon className='link' icon={faTwitter} />
-                        <FontAwesomeIcon className='link' icon={faLinkedin} />
-                        <FontAwesomeIcon className='link' icon={faDiscord} />
+                    <div className='sign-in-deco'>
+                        <img src={Logo} alt='logo' />
+                        <h1>BASE</h1>
+                        <div className='social-links'>
+                            <FontAwesomeIcon className='link' icon={faGithub} />
+                            <FontAwesomeIcon className='link' icon={faTwitter} />
+                            <FontAwesomeIcon className='link' icon={faLinkedin} />
+                            <FontAwesomeIcon className='link' icon={faDiscord} />
+                        </div>
                     </div>
-                </div>
                 <div className='signin-info'>
                     <h1>Sign In</h1>
                     <p>Sign in to your account</p>
                     <div className='third-party-signin-button'>
-                        <button onClick={handleGoogleSignIn}> <img className='brand-logo' src={GoogleLogo}/> Sign In with Google</button>
-                        <button onClick={handleAppleSignIn}> <img className='brand-logo' src={AppleLogo} /> Sign In with Apple</button>
+                        <button onClick={handleGoogleSignIn}> <img className='brand-logo' src={GoogleLogo} alt='GoogleLogo'/> Sign In with Google</button>
+                        <button onClick={handleAppleSignIn}> <img className='brand-logo' src={AppleLogo} alt='AppleLogo'/> Sign In with Apple</button>
                     </div>
                     <form className='signin-form' onSubmit={handleFormSubmit}>
                         <label>

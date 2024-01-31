@@ -9,7 +9,7 @@ import Badge from "../badge";
 export default function FileUpload() {
     const [dragActive, setDragActive] = useState(false);
     const [submittedFiles, setSubmittedFiles] = useState(content.map((item) => { return { ...item, tags: [] } }));
-
+    const [fileSubmitted, setFileSubmitted] = useState(false);
     const [tags, setTags] = useState(Tags);
     const inputRef = useRef(null);
     const [files, setFiles] = useState([]);
@@ -29,7 +29,14 @@ export default function FileUpload() {
         if (files.length === 0) {
             alert("Please select a file");
         } else {
-            setSubmittedFiles(files);
+            files.forEach((file) => {
+                file.tags = [];
+                file.prefix = file.name.split(".")[0];
+                file.link = file.name;
+            });
+            setSubmittedFiles((prevState) => [...prevState, ...files.map((file) => { return { link: file.name, prefix: file.name.split(".")[0], tags: [] } })]);
+            setFiles([]);
+            setFileSubmitted(true);
         }
     }
 
@@ -97,18 +104,17 @@ export default function FileUpload() {
     }
 
     return (
-        <div className="flex items-center justify-center flex-col">
-            <div className="form-holder">
+        <div className="flex items-center justify-center flex-col lg:px-0">
+            <div className="form-holder lg:p-5 px-5">
                 <form
                     className={`${dragActive ? "drag-unActive" : "drag-active"
-                        }`}
+                        } flex flex-col items-center justify-center p-10 rounded-lg border-2 border-dotted border-gray-400`}
                     onDragEnter={handleDragEnter}
                     onSubmit={(e) => e.preventDefault()}
                     onDrop={handleDrop}
                     onDragLeave={handleDragLeave}
                     onDragOver={handleDragOver}
                 >
-                    {/* this input element allows us to select files for upload. We make it hidden so we can activate it when the user clicks select files */}
                     <input
                         placeholder="fileInput"
                         className="hidden"
@@ -118,8 +124,8 @@ export default function FileUpload() {
                         onChange={handleChange}
                         accept=".xlsx,.xls,image/*,.doc, .docx,.ppt, .pptx,.txt,.pdf"
                     />
-                    <img src={ExcelLogo} alt="" />
-                    <p>
+                    <img src={ExcelLogo} alt="ExcelLogo" />
+                    <p className="text-center">
                         Drop your excel sheet here or{" "}
                         <span
                             className="font-bold text-blue-600 cursor-pointer"
@@ -147,16 +153,16 @@ export default function FileUpload() {
                     className="upload-button"
                     onClick={handleSubmitFile}
                 >
-                    <FontAwesomeIcon className='upload-icon' icon={faUpload} />
+                    <FontAwesomeIcon className='upload-icon' icon={faUpload} /> 
                     <span>Upload</span>
                 </button>
 
             </div>
-            {submittedFiles.length > 0 &&
+            {fileSubmitted &&
                 <>
-                    <h1>Uploads</h1>
+                    <h1 style={{ fontSize:'16px', fontWeight: '500'}} >Uploads  <p style={{marginLeft: "15px", cursor: "pointer", fontSize: '16px', fontWeight: '400'}} onClick={()=>{setFileSubmitted(false)}}>X</p></h1>
                     <div className="table-wrapper w-full">
-                        <div className="py-3 px-5 m-5 rounded-lg bg-gray-100">
+                        <div className="py-3 px-5 m-5 rounded-lg bg-gray-100 overflow-x-auto">
                             <table className="w-full border-separate border-spacing-y-3">
                                 <thead>
                                     <tr className="py-2">
@@ -176,7 +182,7 @@ export default function FileUpload() {
                                             <td className="text-left p-3 bg-white">{file.prefix}</td>
                                             <td className="text-left p-3 bg-white">
                                                 <select onChange={(e) => handleTagChange(e, file.link)} className=" bg-white border-2 border-gray-200 rounded-lg px-3 py-1 focus:outline-none">
-                                                    {tags.filter((item) => !file.tags.includes(item)).map((tag) => (
+                                                    {tags.filter((item) => !file.tags || !file.tags.includes(item)).map((tag) => (
                                                         <option value={tag}>{tag}</option>
                                                     ))}
                                                 </select>
